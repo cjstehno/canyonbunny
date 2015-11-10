@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.resolvers.ClasspathFileHandleResolver
 import com.badlogic.gdx.graphics.GL20
 import com.packtpub.libgdx.canyonbunny.game.Assets
 import com.packtpub.libgdx.canyonbunny.game.WorldController
@@ -24,7 +25,7 @@ class CanyonBunnyMain extends ApplicationAdapter {
         Gdx.app.logLevel = Application.LOG_DEBUG
 
         // load assets
-        Assets.instance.init(new AssetManager())
+        Assets.instance.init(newAssetManager())
 
         worldController = new WorldController()
         worldRenderer = new WorldRenderer(worldController)
@@ -62,7 +63,12 @@ class CanyonBunnyMain extends ApplicationAdapter {
 
     @Override
     void resume() {
-        Assets.instance.init(new AssetManager())
+        Assets.instance.init(newAssetManager())
         paused = false
+    }
+
+    private static AssetManager newAssetManager(){
+        new AssetManager()
+//        new AssetManager(new ClasspathFileHandleResolver())
     }
 }
