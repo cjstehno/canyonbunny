@@ -8,7 +8,6 @@ buildscript {
 }
 
 allprojects {
-    apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: 'groovy'
 
@@ -50,8 +49,4 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile 'org.codehaus.groovy:groovy-all:2.4.5'
     }
-}
-
-tasks.eclipse.doLast {
-    delete ".project"
 }

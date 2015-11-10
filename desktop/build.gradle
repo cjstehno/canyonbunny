@@ -1,7 +1,5 @@
-apply plugin: "java"
 
 sourceCompatibility = 1.6
-sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "com.packtpub.libgdx.canyonbunny.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../core/assets");
