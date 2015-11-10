@@ -4,8 +4,9 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.Array
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper
 import groovy.transform.TypeChecked
 
@@ -93,14 +94,15 @@ class WorldController extends InputAdapter {
     private void initTestObjects() {
         testSprites = new Sprite[5]
 
-        // Create empty POT-sized Pixmap with 8 bit RGBA pixel data
-        def (int width, int height) = [32, 32]
+        // Create a list of texture regions
+        Array<TextureRegion> regions = new Array<TextureRegion>()
+        regions.add(Assets.instance.bunny.head)
+        regions.add(Assets.instance.feather.feather)
+        regions.add(Assets.instance.goldCoin.goldCoin)
 
-        Texture texture = new Texture(createProceduralPixmap(width, height))
-
-        // Create new sprites using the texture
+        // Create new sprites using a random texture region
         for (int i = 0; i < testSprites.length; i++) {
-            Sprite spr = new Sprite(texture)
+            Sprite spr = new Sprite(regions.random())
             spr.setSize(1, 1)
 
             // Set origin to sprite's center
@@ -109,6 +111,7 @@ class WorldController extends InputAdapter {
             // Calculate random position for sprite
             spr.setPosition(random(-2.0f, 2.0f), random(-2.0f, 2.0f))
 
+            // Put new sprite into array
             testSprites[i] = spr
         }
 

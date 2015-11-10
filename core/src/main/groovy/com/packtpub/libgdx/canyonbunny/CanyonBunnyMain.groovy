@@ -3,7 +3,9 @@ package com.packtpub.libgdx.canyonbunny
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
+import com.packtpub.libgdx.canyonbunny.game.Assets
 import com.packtpub.libgdx.canyonbunny.game.WorldController
 import com.packtpub.libgdx.canyonbunny.game.WorldRenderer
 import groovy.transform.TypeChecked
@@ -20,6 +22,9 @@ class CanyonBunnyMain extends ApplicationAdapter {
     @Override
     void create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
+
+        // load assets
+        Assets.instance.init(new AssetManager())
 
         worldController = new WorldController()
         worldRenderer = new WorldRenderer(worldController)
@@ -47,6 +52,7 @@ class CanyonBunnyMain extends ApplicationAdapter {
     @Override
     void dispose() {
         worldRenderer.dispose()
+        Assets.instance.dispose()
     }
 
     @Override
@@ -56,6 +62,7 @@ class CanyonBunnyMain extends ApplicationAdapter {
 
     @Override
     void resume() {
+        Assets.instance.init(new AssetManager())
         paused = false
     }
 }
