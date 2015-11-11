@@ -4,6 +4,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
+        classpath "com.badlogicgames.gdx:gdx-tools:1.7.1"
     }
 }
 
@@ -36,7 +37,6 @@ project(":desktop") {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         compile 'org.codehaus.groovy:groovy-all:2.4.5'
     }
 }
