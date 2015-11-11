@@ -67,8 +67,8 @@ class CanyonBunnyMain extends ApplicationAdapter {
         paused = false
     }
 
-    private static AssetManager newAssetManager(){
-        new AssetManager()
-//        new AssetManager(new ClasspathFileHandleResolver())
+    private static AssetManager newAssetManager() {
+        //        new AssetManager()
+        new AssetManager(new ClasspathFileHandleResolver())
     }
 }
