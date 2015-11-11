@@ -11,5 +11,7 @@ class Constants {
     // Visible game world if 5 meter tall
     static final float VIEWPOINT_HEIGHT = 5.0f
 
-    public static final String TEXTURE_ATLAS_OBJECTS = 'images/canyonbunny.pack.atlas'
+    static final String TEXTURE_ATLAS_OBJECTS = 'images/canyonbunny.pack.atlas'
+
+    static final String LEVEL_01 = 'levels/level-01.png'
 }
