@@ -1,23 +1,12 @@
-apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 8
-
-project.ext.mainClassName = "com.packtpub.libgdx.canyonbunny.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../core/assets");
-
-task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
-}
+mainClassName = "com.packtpub.libgdx.canyonbunny.desktop.DesktopLauncher"
 
 task dist(type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
 
     manifest {
         attributes 'Main-Class': project.mainClassName
