@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.utils.Disposable
@@ -20,6 +21,7 @@ class Assets implements Disposable, AssetErrorListener {
     AssetGoldCoin goldCoin
     AssetFeather feather
     AssetLevelDecoration levelDecoration
+    AssetFonts fonts
 
     private AssetManager assetManager
 
@@ -40,6 +42,7 @@ class Assets implements Disposable, AssetErrorListener {
         atlas.textures*.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
 
         // create game resource objects
+        fonts = new AssetFonts()
         bunny = new AssetBunny(atlas)
         rock = new AssetRock(atlas)
         goldCoin = new AssetGoldCoin(atlas)
@@ -55,6 +58,9 @@ class Assets implements Disposable, AssetErrorListener {
     @Override
     void dispose() {
         assetManager.dispose()
+        fonts.defaultSmall.dispose()
+        fonts.defaultNormal.dispose()
+        fonts.defaultBig.dispose()
     }
 
     class AssetBunny {
@@ -111,6 +117,26 @@ class Assets implements Disposable, AssetErrorListener {
             mountainLeft = atlas.findRegion('mountain_left')
             mountainRight = atlas.findRegion('mountain_right')
             waterOverlay = atlas.findRegion('water_overlay')
+        }
+    }
+
+    class AssetFonts {
+        final BitmapFont defaultSmall
+        final BitmapFont defaultNormal
+        final BitmapFont defaultBig
+
+        AssetFonts() {
+            defaultSmall = new BitmapFont(Gdx.files.classpath('fonts/arial-15.fnt'), true)
+            defaultNormal = new BitmapFont(Gdx.files.classpath('fonts/arial-15.fnt'), true)
+            defaultBig = new BitmapFont(Gdx.files.classpath('fonts/arial-15.fnt'), true)
+
+            defaultSmall.data.setScale(0.75f)
+            defaultNormal.data.setScale(1.0f)
+            defaultBig.data.setScale(2.0f)
+
+            defaultSmall.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+            defaultNormal.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+            defaultBig.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
         }
     }
 }

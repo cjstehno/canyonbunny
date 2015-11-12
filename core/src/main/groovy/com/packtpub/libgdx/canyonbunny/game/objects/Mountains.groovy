@@ -24,8 +24,8 @@ class Mountains extends AbstractGameObject {
         regMountainLeft = Assets.instance.levelDecoration.mountainLeft
         regMountainRight = Assets.instance.levelDecoration.mountainRight
 
-        origin.x = -dimension.x * 2
-        length += dimension.x * 2
+        origin.x = (-dimension.x * 2) as float
+        length += (dimension.x * 2) as int
     }
 
     private void drawMountain(SpriteBatch batch, float offsetX, float offsetY, float tintColor) {
@@ -41,13 +41,30 @@ class Mountains extends AbstractGameObject {
 
         for (int i = 0; i < mountainLength; i++) {
             // mountain left
-            TextureRegion reg = regMountainLeft;
-            batch.draw(reg.texture, origin.x + xRel, position.y + origin.y + yRel as float, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.regionX, reg.regionY, reg.regionWidth, reg.regionHeight, false, false)
+            TextureRegion reg = regMountainLeft
+            batch.draw(
+                reg.texture,
+                (origin.x + xRel) as float,
+                (position.y + origin.y + yRel) as float,
+                origin.x,
+                origin.y,
+                dimension.x,
+                dimension.y,
+                scale.x,
+                scale.y,
+                rotation,
+                reg.regionX,
+                reg.regionY,
+                reg.regionWidth,
+                reg.regionHeight,
+                false,
+                false
+            )
             xRel += dimension.x
 
             // mountain right
             reg = regMountainRight
-            batch.draw(reg.texture, origin.x + xRel, position.y + origin.y + yRel as float, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.regionX, reg.regionY, reg.regionWidth, reg.regionHeight, false, false)
+            batch.draw(reg.texture, (origin.x + xRel) as float, (position.y + origin.y + yRel) as float, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.regionX, reg.regionY, reg.regionWidth, reg.regionHeight, false, false)
             xRel += dimension.x
         }
 

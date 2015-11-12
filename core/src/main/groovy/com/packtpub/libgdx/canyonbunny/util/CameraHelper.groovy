@@ -1,9 +1,9 @@
 package com.packtpub.libgdx.canyonbunny.util
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.packtpub.libgdx.canyonbunny.game.objects.AbstractGameObject
 import groovy.transform.TypeChecked
 
 @TypeChecked
@@ -14,7 +14,7 @@ class CameraHelper {
     private final float MAX_ZOOM_IN = 0.25f
     private final float MAX_ZOOM_OUT = 10.0f
 
-    Sprite target
+    AbstractGameObject target
 
     private Vector2 position = new Vector2()
     private float zoom = 1.0f
@@ -22,8 +22,8 @@ class CameraHelper {
     public void update(float deltaTime) {
         if (!hasTarget()) return
 
-        position.x = target.x + target.originX
-        position.y = target.y + target.originY
+        position.x = target.position.x + target.origin.x
+        position.y = target.position.y + target.origin.y
     }
 
     public void setPosition(float x, float y) {
@@ -44,7 +44,7 @@ class CameraHelper {
 
     public boolean hasTarget() { return target != null }
 
-    public boolean hasTarget(Sprite target) {
+    public boolean hasTarget(AbstractGameObject target) {
         return hasTarget() && this.target.equals(target)
     }
 

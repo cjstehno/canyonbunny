@@ -36,19 +36,19 @@ class Rock extends AbstractGameObject {
 
     @Override
     void render(SpriteBatch batch) {
-        float relX = 0
-        float relY = 0
+        float relX = 0f
+        float relY = 0f
 
         // draw left edge
         TextureRegion reg = regEdge
         relX -= dimension.x / 4
         batch.draw(
             reg.texture,
-            position.x + relX,
-            position.y + relY,
+            (position.x + relX) as float,
+            (position.y + relY) as float,
             origin.x,
             origin.y,
-            dimension.x / 4,
+            (dimension.x / 4) as float,
             dimension.y,
             scale.x,
             scale.y,
@@ -67,8 +67,8 @@ class Rock extends AbstractGameObject {
         for (int i = 0; i < length; i++) {
             batch.draw(
                 reg.texture,
-                position.x + relX,
-                position.y + relY,
+                (position.x + relX) as float,
+                (position.y + relY) as float,
                 origin.x,
                 origin.y,
                 dimension.x,
@@ -90,11 +90,11 @@ class Rock extends AbstractGameObject {
         reg = regEdge
         batch.draw(
             reg.texture,
-            position.x + relX,
-            position.y + relY,
-            origin.x + dimension.x / 8,
+            (position.x + relX) as float,
+            (position.y + relY) as float,
+            (origin.x + dimension.x / 8) as float,
             origin.y,
-            dimension.x / 4,
+            (dimension.x / 4) as float,
             dimension.y,
             scale.x,
             scale.y,

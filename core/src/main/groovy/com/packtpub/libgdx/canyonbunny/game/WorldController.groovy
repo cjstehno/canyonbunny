@@ -4,23 +4,21 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.utils.Array
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper
+import com.packtpub.libgdx.canyonbunny.util.Constants
 import groovy.transform.TypeChecked
 
 import static com.badlogic.gdx.Input.Keys.*
-import static com.badlogic.gdx.math.MathUtils.random
 
 @TypeChecked
 class WorldController extends InputAdapter {
 
     private static final String TAG = WorldController.name
 
-    Sprite[] testSprites
-    int selectedSprite
     CameraHelper cameraHelper
+    Level level
+    int lives
+    int score
 
     WorldController() {
         init()
@@ -29,24 +27,23 @@ class WorldController extends InputAdapter {
     private void init() {
         Gdx.input.inputProcessor = this
         cameraHelper = new CameraHelper()
-        initTestObjects()
+
+        lives = Constants.LIVES_START
+        initLevel()
+    }
+
+    private void initLevel() {
+        score = 0
+        level = new Level(Constants.LEVEL_01)
     }
 
     void update(float deltaTime) {
         handleDebugInput(deltaTime)
-        updateTestObjects(deltaTime)
         cameraHelper.update(deltaTime)
     }
 
     private void handleDebugInput(float deltaTime) {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop) return
-
-        // Selected Sprite Controls
-        float sprMoveSpeed = 5 * deltaTime
-        if (Gdx.input.isKeyPressed(A)) moveSelectedSprite(-sprMoveSpeed, 0)
-        if (Gdx.input.isKeyPressed(D)) moveSelectedSprite(sprMoveSpeed, 0)
-        if (Gdx.input.isKeyPressed(W)) moveSelectedSprite(0, sprMoveSpeed)
-        if (Gdx.input.isKeyPressed(S)) moveSelectedSprite(0, -sprMoveSpeed)
 
         // Camera Controls (move)
         float camMoveSpeed = 5 * deltaTime
@@ -73,52 +70,6 @@ class WorldController extends InputAdapter {
         cameraHelper.setPosition(x, y)
     }
 
-    private void moveSelectedSprite(float x, float y) {
-        testSprites[selectedSprite].translate(x, y)
-    }
-
-    private void updateTestObjects(float deltaTime) {
-        // Get current rotation from selected sprite
-        float rotation = testSprites[selectedSprite].rotation
-
-        // Rotate sprite by 90 degrees per second
-        rotation += 90 * deltaTime
-
-        // Wrap around at 360 degrees
-        rotation %= 360
-
-        // Set new rotation value to selected sprite
-        testSprites[selectedSprite].rotation = rotation
-    }
-
-    private void initTestObjects() {
-        testSprites = new Sprite[5]
-
-        // Create a list of texture regions
-        Array<TextureRegion> regions = new Array<TextureRegion>()
-        regions.add(Assets.instance.bunny.head)
-        regions.add(Assets.instance.feather.feather)
-        regions.add(Assets.instance.goldCoin.goldCoin)
-
-        // Create new sprites using a random texture region
-        for (int i = 0; i < testSprites.length; i++) {
-            Sprite spr = new Sprite(regions.random())
-            spr.setSize(1, 1)
-
-            // Set origin to sprite's center
-            spr.setOrigin((spr.width / 2.0f) as float, (spr.height / 2.0f) as float)
-
-            // Calculate random position for sprite
-            spr.setPosition(random(-2.0f, 2.0f), random(-2.0f, 2.0f))
-
-            // Put new sprite into array
-            testSprites[i] = spr
-        }
-
-        // Set first sprite as selected one
-        selectedSprite = 0
-    }
-
     private Pixmap createProceduralPixmap(int width, int height) {
         Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888)
         pixmap.setColor(1, 0, 0, 0.5f)
@@ -135,27 +86,14 @@ class WorldController extends InputAdapter {
     }
 
     @Override
-    boolean keyUp(int keycode) {
+    public boolean keyUp(int keycode) {
         // Reset game world
         if (keycode == R) {
             init()
-            Gdx.app.debug TAG, 'Game world has been reset.'
 
-        } else if (keycode == SPACE) {
-            selectedSprite = (selectedSprite + 1) % testSprites.length
-
-            if (cameraHelper.hasTarget()) {
-                cameraHelper.target = testSprites[selectedSprite]
-            }
-
-            Gdx.app.debug TAG, "Sprite #${selectedSprite} selected"
-
-        } else if (keycode == ENTER) {
-            cameraHelper.target = cameraHelper.hasTarget() ? null : testSprites[selectedSprite]
-
-            Gdx.app.debug TAG, "Camera follow enabled: ${cameraHelper.hasTarget()}"
+            Gdx.app.debug TAG, 'Game world has been reset'
         }
 
-        false
+        return false
     }
 }
