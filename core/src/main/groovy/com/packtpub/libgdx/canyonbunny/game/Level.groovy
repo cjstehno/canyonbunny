@@ -33,20 +33,29 @@ class Level {
     }
 
     // objects
-    public Array<Rock> rocks
+    Array<Rock> rocks
 
     // decoration
-    public Clouds clouds;
-    public Mountains mountains;
-    public WaterOverlay waterOverlay;
+    Clouds clouds;
+    Mountains mountains;
+    WaterOverlay waterOverlay;
+
+    BunnyHead bunnyHead
+    Array<GoldCoin> goldCoins
+    Array<Feather> feathers
 
     public Level(String filename) {
         init(filename)
     }
 
     private void init(String filename) {
+        // player
+        bunnyHead = null
+
         // objects
         rocks = new Array<Rock>()
+        goldCoins = new Array<GoldCoin>()
+        feathers = new Array<Feather>()
 
         // load image file that represents the level data
         Pixmap pixmap = new Pixmap(Gdx.files.internal(filename))
@@ -83,19 +92,32 @@ class Level {
                 }
                 // player spawn point
                 else if (BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel)) {
+                    AbstractGameObject obj = new BunnyHead()
+                    obj.position.set(pixelX, (baseHeight * obj.dimension.y - 3.0f) as float)
+                    bunnyHead = (BunnyHead) obj
                 }
                 // feather
                 else if (BLOCK_TYPE.ITEM_FEATHER.sameColor(currentPixel)) {
+                    AbstractGameObject obj = new Feather()
+                    obj.position.set(pixelX, (baseHeight * obj.dimension.y - 1.5f) as float)
+                    feathers.add((Feather) obj)
                 }
                 // gold coin
                 else if (BLOCK_TYPE.ITEM_GOLD_COIN.sameColor(currentPixel)) {
+                    AbstractGameObject obj = new GoldCoin();
+                    obj.position.set(pixelX, (baseHeight * obj.dimension.y - 1.5f) as float)
+                    goldCoins.add((GoldCoin) obj)
                 }
                 // unknown object/pixel color
                 else {
-                    int r = 0xff & (currentPixel >>> 24) //red color channel
-                    int g = 0xff & (currentPixel >>> 16) //green color channel
-                    int b = 0xff & (currentPixel >>> 8)  //blue color channel
-                    int a = 0xff & currentPixel  //alpha channel
+                    int r = 0xff & (currentPixel >>> 24)
+                    //red color channel
+                    int g = 0xff & (currentPixel >>> 16)
+                    //green color channel
+                    int b = 0xff & (currentPixel >>> 8)
+                    //blue color channel
+                    int a = 0xff & currentPixel
+                    //alpha channel
 
                     Gdx.app.error TAG, "Unknown object at x<$pixelX> y<$pixelY>: r<$r> g<$g> b<$b> a<$a>"
                 }
@@ -123,10 +145,25 @@ class Level {
         // Draw Rocks
         rocks.each { it.render(batch) }
 
+        goldCoins.each { it.render(batch) }
+        feathers.each { it.render(batch) }
+
+        bunnyHead.render(batch)
+
         // Draw Water Overlay
         waterOverlay.render(batch)
 
         // Draw Clouds
         clouds.render(batch)
+    }
+
+    public void update(float deltaTime) {
+        bunnyHead.update(deltaTime)
+
+        rocks.each { it.update(deltaTime) }
+        goldCoins.each { it.update(deltaTime) }
+        feathers.each { it.update(deltaTime) }
+
+        clouds.update(deltaTime)
     }
 }

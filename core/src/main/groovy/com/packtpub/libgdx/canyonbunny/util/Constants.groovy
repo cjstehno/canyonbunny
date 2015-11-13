@@ -22,4 +22,6 @@ class Constants {
     static final String LEVEL_01 = 'levels/level-01.png'
 
     static final int LIVES_START = 3
+
+    static final float ITEM_FEATHER_POWERUP_DURATION = 9
 }

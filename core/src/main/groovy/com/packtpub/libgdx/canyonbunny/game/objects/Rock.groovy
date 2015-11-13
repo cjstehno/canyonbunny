@@ -3,10 +3,9 @@ package com.packtpub.libgdx.canyonbunny.game.objects
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.packtpub.libgdx.canyonbunny.game.Assets
+import groovy.transform.TypeChecked
 
-/**
- * FIXME: document me
- */
+@TypeChecked
 class Rock extends AbstractGameObject {
 
     private TextureRegion regEdge
@@ -28,6 +27,8 @@ class Rock extends AbstractGameObject {
 
     void setLength(int len) {
         this.length = len
+
+        bounds.set(0f, 0f, (dimension.x * length) as float, dimension.y)
     }
 
     void increaseLength(int amount) {
@@ -41,7 +42,7 @@ class Rock extends AbstractGameObject {
 
         // draw left edge
         TextureRegion reg = regEdge
-        relX -= dimension.x / 4
+        relX -= (dimension.x / 4) as float
         batch.draw(
             reg.texture,
             (position.x + relX) as float,
