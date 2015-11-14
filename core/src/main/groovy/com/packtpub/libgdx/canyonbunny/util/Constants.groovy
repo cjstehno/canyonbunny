@@ -19,11 +19,21 @@ class Constants {
 
     static final String TEXTURE_ATLAS_OBJECTS = 'images/canyonbunny.pack.atlas'
 
+    static final String TEXTURE_ATLAS_UI = 'images/canyonbunny-ui.pack.atlas'
+
+    static final String TEXTURE_ATLAS_LIBGDX_UI = 'skins/uiskin.atlas'
+
+    static final String SKIN_LIBGDX_UI = 'skins/uiskin.json'
+
+    static final String SKIN_CANYONBUNNY_UI = 'skins/canyonbunny-ui.json'
+
     static final String LEVEL_01 = 'levels/level-01.png'
 
     static final int LIVES_START = 3
 
     static final float ITEM_FEATHER_POWERUP_DURATION = 9
+
+    static final String PREFERENCES = "canyonbunny.prefs";
 
     static final float TIME_DELAY_GAME_OVER = 3
 }

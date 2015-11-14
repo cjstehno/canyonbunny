@@ -3,11 +3,8 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker
 sourceCompatibility = 8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-task pack << {
-    def indir = file('raw-assets/images')
-    def outdir = file('src/main/resources/images')
-
-    logger.lifecycle 'Packing: {} into {}', indir, outdir
+def performPacking(File input, File output, String name) {
+    logger.lifecycle 'Packing: {} into {}', input, output
 
     TexturePacker.Settings settings = new TexturePacker.Settings()
     settings.maxWidth = 1024
@@ -15,14 +12,17 @@ task pack << {
     settings.duplicatePadding = false
     settings.debug = project.hasProperty('debugPack')
 
-    TexturePacker.process(settings, indir as String, outdir as String, 'canyonbunny.pack')
+    TexturePacker.process(settings, input as String, output as String, name)
+}
+
+task pack << {
+    performPacking(file('raw-assets/images'), file('src/main/resources/images'), 'canyonbunny.pack')
+    performPacking(file('raw-assets/images-ui'), file('src/main/resources/images'), 'canyonbunny-ui.pack')
 }
 pack.dependsOn = ['cleanPack']
 
 task cleanPack << {
-    def outdir = file('src/main/resources/images')
+    logger.lifecycle 'Cleaning packed images '
 
-    logger.lifecycle 'Cleaning packed images from {}', outdir
-
-    outdir.deleteDir()
+    file('src/main/resources/images').deleteDir()
 }

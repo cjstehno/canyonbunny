@@ -3,7 +3,9 @@ package com.packtpub.libgdx.canyonbunny.game.objects
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.packtpub.libgdx.canyonbunny.game.Assets
+import com.packtpub.libgdx.canyonbunny.util.CharacterSkin
 import com.packtpub.libgdx.canyonbunny.util.Constants
+import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
 
 @TypeChecked
@@ -101,6 +103,8 @@ class BunnyHead extends AbstractGameObject {
 
     @Override
     public void render(SpriteBatch batch) {
+        batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].color)
+
         // Set special color when game object has a feather power-up
         if (hasFeatherPowerup) {
             batch.setColor(1.0f, 0.8f, 0.0f, 1.0f)

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.packtpub.libgdx.canyonbunny.util.Constants
+import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
 
 @TypeChecked
@@ -76,7 +77,9 @@ class WorldRenderer implements Disposable {
         renderGuiExtraLive(batch)
 
         // draw FPS text (anchored to bottom right edge)
-        renderGuiFpsCounter(batch)
+        if (GamePreferences.instance.showFpsCounter) {
+            renderGuiFpsCounter(batch)
+        }
 
         renderGuiGameOverMessage(batch)
 
