@@ -1,6 +1,5 @@
 package com.packtpub.libgdx.canyonbunny.game.objects
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.packtpub.libgdx.canyonbunny.game.Assets
@@ -65,8 +64,6 @@ class BunnyHead extends AbstractGameObject {
     }
 
     void setJumping(boolean jumpKeyPressed) {
-        if(jumpKeyPressed) Gdx.app.log TAG, "<< jumping ($jumpState) >>"
-
         switch (jumpState) {
             case JUMP_STATE.GROUNDED: // Character is standing on a platform
                 if (jumpKeyPressed) {

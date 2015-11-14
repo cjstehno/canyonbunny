@@ -1,6 +1,7 @@
 package com.packtpub.libgdx.canyonbunny.game
 
 import com.badlogic.gdx.Application
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.math.Rectangle
@@ -8,6 +9,7 @@ import com.packtpub.libgdx.canyonbunny.game.objects.BunnyHead
 import com.packtpub.libgdx.canyonbunny.game.objects.Feather
 import com.packtpub.libgdx.canyonbunny.game.objects.GoldCoin
 import com.packtpub.libgdx.canyonbunny.game.objects.Rock
+import com.packtpub.libgdx.canyonbunny.screens.MenuScreen
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper
 import com.packtpub.libgdx.canyonbunny.util.Constants
 import groovy.transform.TypeChecked
@@ -27,8 +29,10 @@ class WorldController extends InputAdapter {
     private Rectangle r1 = new Rectangle()
     private Rectangle r2 = new Rectangle()
     private float timeLeftGameOverDelay
+    private Game game
 
-    WorldController() {
+    WorldController(Game game) {
+        this.game = game
         init()
     }
 
@@ -42,11 +46,15 @@ class WorldController extends InputAdapter {
         initLevel()
     }
 
-    boolean isGameOver(){
+    private void backToMenu() {
+        game.setScreen(new MenuScreen(game))
+    }
+
+    boolean isGameOver() {
         lives < 0
     }
 
-    boolean isPlayerInWater(){
+    boolean isPlayerInWater() {
         level.bunnyHead.position.y < -5
     }
 
@@ -59,9 +67,9 @@ class WorldController extends InputAdapter {
     void update(float deltaTime) {
         handleDebugInput(deltaTime)
 
-        if(isGameOver()){
+        if (isGameOver()) {
             timeLeftGameOverDelay -= deltaTime
-            if( timeLeftGameOverDelay < 0) init()
+            if (timeLeftGameOverDelay < 0) backToMenu()
 
         } else {
             handleInputGame(deltaTime)
@@ -71,9 +79,9 @@ class WorldController extends InputAdapter {
         testCollisions()
         cameraHelper.update(deltaTime)
 
-        if( !isGameOver() && isPlayerInWater()){
+        if (!isGameOver() && isPlayerInWater()) {
             lives--
-            if(isGameOver()){
+            if (isGameOver()) {
                 timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER
             } else {
                 initLevel()
@@ -124,12 +132,15 @@ class WorldController extends InputAdapter {
             cameraHelper.target = cameraHelper.hasTarget() ? null : level.bunnyHead
 
             Gdx.app.debug TAG, "Camera follow enabled: ${cameraHelper.hasTarget()}"
+
+        } else if (keycode == ESCAPE || keycode == BACK) {
+            backToMenu()
         }
 
         return false
     }
 
-    private void handleInputGame (float deltaTime) {
+    private void handleInputGame(float deltaTime) {
         if (cameraHelper.hasTarget(level.bunnyHead)) {
             // Player Movement
             if (Gdx.input.isKeyPressed(LEFT)) {
