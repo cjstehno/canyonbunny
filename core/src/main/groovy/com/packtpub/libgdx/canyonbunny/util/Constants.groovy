@@ -24,4 +24,6 @@ class Constants {
     static final int LIVES_START = 3
 
     static final float ITEM_FEATHER_POWERUP_DURATION = 9
+
+    static final float TIME_DELAY_GAME_OVER = 3
 }

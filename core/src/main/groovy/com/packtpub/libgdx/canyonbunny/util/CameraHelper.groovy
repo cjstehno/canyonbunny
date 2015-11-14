@@ -24,6 +24,9 @@ class CameraHelper {
 
         position.x = target.position.x + target.origin.x
         position.y = target.position.y + target.origin.y
+
+        // prevent camera from going down too far
+        position.y = Math.max(-1f, position.y)
     }
 
     public void setPosition(float x, float y) {

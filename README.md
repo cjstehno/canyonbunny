@@ -5,6 +5,8 @@ This is the tutorial game from the book
 
 > Warning: this code is inspired by the book; however, I have made quite a few changes (for the better, I feel).
 
+> Disclaimer: This code does not work fully. There are issues with the physics that I am leaving broken for now since this is just a learning project.
+
 ## Build
 
     ./gradlew clean build pack dist
