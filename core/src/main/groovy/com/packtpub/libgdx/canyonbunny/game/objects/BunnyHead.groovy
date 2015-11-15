@@ -1,5 +1,7 @@
 package com.packtpub.libgdx.canyonbunny.game.objects
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.packtpub.libgdx.canyonbunny.game.Assets
@@ -26,6 +28,8 @@ class BunnyHead extends AbstractGameObject {
     JUMP_STATE jumpState
     boolean hasFeatherPowerup
     float timeLeftFeatherPowerup
+
+    ParticleEffect dustParticles = new ParticleEffect()
 
     private final float JUMP_TIME_MAX = 0.3f
     private final float JUMP_TIME_MIN = 0.1f
@@ -63,6 +67,8 @@ class BunnyHead extends AbstractGameObject {
         // Power-ups
         hasFeatherPowerup = false
         timeLeftFeatherPowerup = 0
+
+        dustParticles.load(Gdx.files.classpath('particles/dust.pfx'), Gdx.files.classpath('particles'))
     }
 
     void setJumping(boolean jumpKeyPressed) {
@@ -103,6 +109,8 @@ class BunnyHead extends AbstractGameObject {
 
     @Override
     public void render(SpriteBatch batch) {
+        dustParticles.draw(batch)
+
         batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].color)
 
         // Set special color when game object has a feather power-up
@@ -133,6 +141,8 @@ class BunnyHead extends AbstractGameObject {
                 setFeatherPowerup(false)
             }
         }
+
+        dustParticles.update(deltaTime)
     }
 
     @Override
@@ -167,7 +177,9 @@ class BunnyHead extends AbstractGameObject {
                 }
         }
 
-        if (jumpState != JUMP_STATE.GROUNDED)
+        if (jumpState != JUMP_STATE.GROUNDED){
+            dustParticles.allowCompletion()
             super.updateMotionY(deltaTime)
+        }
     }
 }

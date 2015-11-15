@@ -25,6 +25,8 @@ class WorldController extends InputAdapter {
     Level level
     int lives
     int score
+    float livesVisual
+    float scoreVisual
 
     private Rectangle r1 = new Rectangle()
     private Rectangle r2 = new Rectangle()
@@ -41,6 +43,7 @@ class WorldController extends InputAdapter {
         cameraHelper = new CameraHelper()
 
         lives = Constants.LIVES_START
+        livesVisual = lives
         timeLeftGameOverDelay = 0
 
         initLevel()
@@ -60,6 +63,7 @@ class WorldController extends InputAdapter {
 
     private void initLevel() {
         score = 0
+        scoreVisual = score
         level = new Level(Constants.LEVEL_01)
         cameraHelper.target = level.bunnyHead
     }
@@ -86,6 +90,15 @@ class WorldController extends InputAdapter {
             } else {
                 initLevel()
             }
+        }
+        level.mountains.updateScrollPosition(cameraHelper.position)
+
+        if (livesVisual > lives) {
+            livesVisual = Math.max(lives, livesVisual - 1 * deltaTime)
+        }
+
+        if (scoreVisual < score) {
+            scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime)
         }
     }
 
