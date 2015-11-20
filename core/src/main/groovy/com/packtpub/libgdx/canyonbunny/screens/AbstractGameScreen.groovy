@@ -1,6 +1,6 @@
 package com.packtpub.libgdx.canyonbunny.screens
 
-import com.badlogic.gdx.Game
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.assets.AssetManager
 import com.packtpub.libgdx.canyonbunny.game.Assets
@@ -9,9 +9,9 @@ import groovy.transform.TypeChecked
 @TypeChecked
 abstract class AbstractGameScreen implements Screen {
 
-    protected Game game
+    protected DirectedGame game
 
-    AbstractGameScreen(Game game) {
+    AbstractGameScreen(DirectedGame game) {
         this.game = game
     }
 
@@ -32,4 +32,6 @@ abstract class AbstractGameScreen implements Screen {
     void dispose() {
         Assets.instance.dispose()
     }
+
+    abstract InputProcessor getInputProcessor()
 }

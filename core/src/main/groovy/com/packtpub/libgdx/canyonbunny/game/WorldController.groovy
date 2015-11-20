@@ -1,20 +1,24 @@
 package com.packtpub.libgdx.canyonbunny.game
 
 import com.badlogic.gdx.Application
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.Rectangle
 import com.packtpub.libgdx.canyonbunny.game.objects.BunnyHead
 import com.packtpub.libgdx.canyonbunny.game.objects.Feather
 import com.packtpub.libgdx.canyonbunny.game.objects.GoldCoin
 import com.packtpub.libgdx.canyonbunny.game.objects.Rock
+import com.packtpub.libgdx.canyonbunny.screens.DirectedGame
 import com.packtpub.libgdx.canyonbunny.screens.MenuScreen
+import com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionSlide
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper
 import com.packtpub.libgdx.canyonbunny.util.Constants
 import groovy.transform.TypeChecked
 
 import static com.badlogic.gdx.Input.Keys.*
+import static com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionSlide.DOWN
 
 @TypeChecked
 class WorldController extends InputAdapter {
@@ -31,15 +35,14 @@ class WorldController extends InputAdapter {
     private Rectangle r1 = new Rectangle()
     private Rectangle r2 = new Rectangle()
     private float timeLeftGameOverDelay
-    private Game game
+    private DirectedGame game
 
-    WorldController(Game game) {
+    WorldController(DirectedGame game) {
         this.game = game
         init()
     }
 
     private void init() {
-        Gdx.input.inputProcessor = this
         cameraHelper = new CameraHelper()
 
         lives = Constants.LIVES_START
@@ -50,7 +53,10 @@ class WorldController extends InputAdapter {
     }
 
     private void backToMenu() {
-        game.setScreen(new MenuScreen(game))
+        game.setScreen(
+            new MenuScreen(game),
+            ScreenTransitionSlide.init(0.75f, DOWN, false, Interpolation.bounceOut)
+        )
     }
 
     boolean isGameOver() {
@@ -113,7 +119,7 @@ class WorldController extends InputAdapter {
             if (Gdx.input.isKeyPressed(LEFT)) moveCamera(-camMoveSpeed, 0)
             if (Gdx.input.isKeyPressed(RIGHT)) moveCamera(camMoveSpeed, 0)
             if (Gdx.input.isKeyPressed(UP)) moveCamera(0, camMoveSpeed)
-            if (Gdx.input.isKeyPressed(DOWN)) moveCamera(0, -camMoveSpeed)
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) moveCamera(0, -camMoveSpeed)
             if (Gdx.input.isKeyPressed(BACKSPACE)) cameraHelper.setPosition(0, 0)
         }
 
