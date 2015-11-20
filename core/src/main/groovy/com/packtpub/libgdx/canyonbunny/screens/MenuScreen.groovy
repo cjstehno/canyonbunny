@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.packtpub.libgdx.canyonbunny.game.Assets
 import com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionFade
+import com.packtpub.libgdx.canyonbunny.util.AudioManager
 import com.packtpub.libgdx.canyonbunny.util.CharacterSkin
 import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
@@ -228,12 +229,14 @@ class MenuScreen extends AbstractGameScreen {
     private void onSaveClicked() {
         saveSettings()
         onCancelClicked()
+        AudioManager.instance.onSettingsUpdated()
     }
 
     private void onCancelClicked() {
         btnMenuPlay.visible = true
         btnMenuOptions.visible = true
         winOptions.visible = false
+        AudioManager.instance.onSettingsUpdated()
     }
 
     private Table buildOptWinAudioSettings() {

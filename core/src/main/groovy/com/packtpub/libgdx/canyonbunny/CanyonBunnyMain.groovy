@@ -8,12 +8,17 @@ import com.packtpub.libgdx.canyonbunny.game.Assets
 import com.packtpub.libgdx.canyonbunny.screens.DirectedGame
 import com.packtpub.libgdx.canyonbunny.screens.MenuScreen
 import com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionSlice
+import com.packtpub.libgdx.canyonbunny.util.AudioManager
+import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
 
 import static com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionSlice.UP_DOWN
 
 @TypeChecked
 class CanyonBunnyMain extends DirectedGame {
+
+    // Might need this
+    // FIXME: http://stackoverflow.com/questions/15572908/opengl-is-not-supported-by-the-video-driver
 
     @Override
     void create() {
@@ -22,6 +27,10 @@ class CanyonBunnyMain extends DirectedGame {
 
         // Load assets
         Assets.instance.init(new AssetManager())
+
+        // Load audio preferences
+        GamePreferences.instance.load()
+        AudioManager.instance.play(Assets.instance.music.song01)
 
         // Start game at menu screen
         setScreen(new MenuScreen(this), ScreenTransitionSlice.init(2f, UP_DOWN, 10, Interpolation.pow5Out))

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -22,6 +24,8 @@ class Assets implements Disposable, AssetErrorListener {
     AssetFeather feather
     AssetLevelDecoration levelDecoration
     AssetFonts fonts
+    AssetSounds sounds
+    AssetMusic music
 
     private AssetManager assetManager
 
@@ -29,6 +33,17 @@ class Assets implements Disposable, AssetErrorListener {
         this.assetManager = assetManager
         assetManager.errorListener = this
         assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS, TextureAtlas)
+
+        // load sounds
+        assetManager.load('sounds/jump.wav', Sound)
+        assetManager.load('sounds/jump_with_feather.wav', Sound)
+        assetManager.load('sounds/pickup_coin.wav', Sound)
+        assetManager.load('sounds/pickup_feather.wav', Sound)
+        assetManager.load('sounds/live_lost.wav', Sound)
+
+        // load music
+        assetManager.load('music/keith303_-_brand_new_high_score.mp3', Music)
+
         assetManager.finishLoading()
 
         Gdx.app.debug TAG, "# of assets loaded: ${assetManager.assetNames.size}"
@@ -48,6 +63,8 @@ class Assets implements Disposable, AssetErrorListener {
         goldCoin = new AssetGoldCoin(atlas)
         feather = new AssetFeather(atlas)
         levelDecoration = new AssetLevelDecoration(atlas)
+        sounds = new AssetSounds(assetManager)
+        music = new AssetMusic(assetManager)
     }
 
     @Override
@@ -137,6 +154,30 @@ class Assets implements Disposable, AssetErrorListener {
             defaultSmall.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
             defaultNormal.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
             defaultBig.region.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+        }
+    }
+
+    class AssetSounds {
+        final Sound jump
+        final Sound jumpWithFeather
+        final Sound pickupCoin
+        final Sound pickupFeather
+        final Sound liveLost
+
+        AssetSounds(AssetManager am) {
+            jump = am.get('sounds/jump.wav', Sound)
+            jumpWithFeather = am.get('sounds/jump_with_feather.wav', Sound)
+            pickupCoin = am.get('sounds/pickup_coin.wav', Sound)
+            pickupFeather = am.get('sounds/pickup_feather.wav', Sound)
+            liveLost = am.get('sounds/live_lost.wav', Sound)
+        }
+    }
+
+    class AssetMusic {
+        final Music song01
+
+        AssetMusic(AssetManager am) {
+            song01 = am.get('music/keith303_-_brand_new_highscore.mp3', Music)
         }
     }
 }

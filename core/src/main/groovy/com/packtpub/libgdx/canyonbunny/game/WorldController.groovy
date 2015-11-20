@@ -13,6 +13,7 @@ import com.packtpub.libgdx.canyonbunny.game.objects.Rock
 import com.packtpub.libgdx.canyonbunny.screens.DirectedGame
 import com.packtpub.libgdx.canyonbunny.screens.MenuScreen
 import com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransitionSlide
+import com.packtpub.libgdx.canyonbunny.util.AudioManager
 import com.packtpub.libgdx.canyonbunny.util.CameraHelper
 import com.packtpub.libgdx.canyonbunny.util.Constants
 import groovy.transform.TypeChecked
@@ -90,6 +91,7 @@ class WorldController extends InputAdapter {
         cameraHelper.update(deltaTime)
 
         if (!isGameOver() && isPlayerInWater()) {
+            AudioManager.instance.play(Assets.instance.sounds.liveLost)
             lives--
             if (isGameOver()) {
                 timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER
@@ -258,6 +260,8 @@ class WorldController extends InputAdapter {
     private void onCollisionBunnyWithGoldCoin(GoldCoin goldCoin) {
         goldCoin.collected = true
 
+        AudioManager.instance.play(Assets.instance.sounds.pickupCoin)
+
         score += goldCoin.score
 
         Gdx.app.log TAG, 'Gold coin collected'
@@ -265,6 +269,8 @@ class WorldController extends InputAdapter {
 
     private void onCollisionBunnyWithFeather(Feather feather) {
         feather.collected = true
+
+        AudioManager.instance.play(Assets.instance.sounds.pickupFeather)
 
         score += feather.score
 
