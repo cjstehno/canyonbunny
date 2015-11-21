@@ -19,7 +19,8 @@ class Level {
         ROCK(0, 255, 0), // green
         PLAYER_SPAWNPOINT(255, 255, 255), // white
         ITEM_FEATHER(255, 0, 255), // purple
-        ITEM_GOLD_COIN(255, 255, 0); // yellow
+        ITEM_GOLD_COIN(255, 255, 0), // yellow
+        GOAL(255, 0, 0)
 
         final int color
 
@@ -43,6 +44,8 @@ class Level {
     BunnyHead bunnyHead
     Array<GoldCoin> goldCoins
     Array<Feather> feathers
+    Array<Carrot> carrots
+    Goal goal
 
     public Level(String filename) {
         init(filename)
@@ -56,6 +59,7 @@ class Level {
         rocks = new Array<Rock>()
         goldCoins = new Array<GoldCoin>()
         feathers = new Array<Feather>()
+        carrots = new Array<>()
 
         // load image file that represents the level data
         Pixmap pixmap = new Pixmap(Gdx.files.internal(filename))
@@ -108,6 +112,12 @@ class Level {
                     obj.position.set(pixelX, (baseHeight * obj.dimension.y - 1.5f) as float)
                     goldCoins.add((GoldCoin) obj)
                 }
+                // goal
+                else if (BLOCK_TYPE.GOAL.sameColor(currentPixel)) {
+                    Goal obj = new Goal()
+                    obj.position.set(pixelX, (baseHeight - 7.0f) as float)
+                    goal = (Goal) obj
+                }
                 // unknown object/pixel color
                 else {
                     int r = 0xff & (currentPixel >>> 24)
@@ -142,11 +152,15 @@ class Level {
         // Draw Mountains
         mountains.render(batch)
 
+        // draw goal
+        goal.render(batch)
+
         // Draw Rocks
         rocks.each { it.render(batch) }
 
         goldCoins.each { it.render(batch) }
         feathers.each { it.render(batch) }
+        carrots.each { it.render(batch) }
 
         bunnyHead.render(batch)
 
@@ -163,6 +177,7 @@ class Level {
         rocks.each { it.update(deltaTime) }
         goldCoins.each { it.update(deltaTime) }
         feathers.each { it.update(deltaTime) }
+        carrots.each { it.update(deltaTime) }
 
         clouds.update(deltaTime)
     }

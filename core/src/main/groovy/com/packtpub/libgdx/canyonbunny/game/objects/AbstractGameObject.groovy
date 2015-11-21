@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.Body
 import groovy.transform.TypeChecked
 
 @TypeChecked
@@ -20,15 +21,23 @@ abstract class AbstractGameObject {
     Vector2 acceleration = new Vector2()
     Rectangle bounds = new Rectangle()
 
+    Body body
+
     float rotation = 0
 
     public void update(float deltaTime) {
-        updateMotionX(deltaTime)
-        updateMotionY(deltaTime)
+        if(!body){
+            updateMotionX(deltaTime)
+            updateMotionY(deltaTime)
 
-        // Move to new position
-        position.x += velocity.x * deltaTime
-        position.y += velocity.y * deltaTime
+            // Move to new position
+            position.x += velocity.x * deltaTime
+            position.y += velocity.y * deltaTime
+
+        } else {
+            position.set(body.position)
+            rotation = (body.angle * MathUtils.radiansToDegrees) as float
+        }
     }
 
     public abstract void render(SpriteBatch batch)

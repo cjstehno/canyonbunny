@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.packtpub.libgdx.canyonbunny.util.Constants
 import com.packtpub.libgdx.canyonbunny.util.GamePreferences
@@ -13,10 +14,13 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class WorldRenderer implements Disposable {
 
+    private static final boolean DEBUG_DRAW_BOX2D_WORLD = false
+
     private OrthographicCamera camera
     private OrthographicCamera cameraGui
     private SpriteBatch batch
     private WorldController worldController
+    private Box2DDebugRenderer box2DDebugRenderer
 
     WorldRenderer(WorldController worldController) {
         this.worldController = worldController
@@ -34,6 +38,8 @@ class WorldRenderer implements Disposable {
         cameraGui.position.set(0f, 0f, 0f)
         cameraGui.setToOrtho(true)
         cameraGui.update()
+
+        box2DDebugRenderer = new Box2DDebugRenderer()
     }
 
     void render() {
@@ -47,6 +53,10 @@ class WorldRenderer implements Disposable {
         batch.begin()
         worldController.level.render(batch)
         batch.end()
+
+        if (DEBUG_DRAW_BOX2D_WORLD) {
+            box2DDebugRenderer.render(worldController.b2world, camera.combined)
+        }
     }
 
     void resize(int width, int height) {

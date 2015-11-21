@@ -36,4 +36,10 @@ class Constants {
     static final String PREFERENCES = "canyonbunny.prefs";
 
     static final float TIME_DELAY_GAME_OVER = 3
+
+    static final int CARROTS_SPAWN_MAX = 100
+
+    static final float CARROTS_SPAWN_RADIUS = 3.5f
+
+    static final float TIME_DELAY_GAME_FINISHED = 6
 }

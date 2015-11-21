@@ -37,6 +37,7 @@ project(":desktop") {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile 'org.codehaus.groovy:groovy-all:2.4.5'
 
         runtime "com.badlogicgames.gdx:gdx-tools:1.7.1"
@@ -49,6 +50,7 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile 'org.codehaus.groovy:groovy-all:2.4.5'
     }
 }
