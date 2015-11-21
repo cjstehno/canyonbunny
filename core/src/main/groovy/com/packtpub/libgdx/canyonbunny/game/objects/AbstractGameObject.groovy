@@ -1,5 +1,6 @@
 package com.packtpub.libgdx.canyonbunny.game.objects
 
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
@@ -23,10 +24,24 @@ abstract class AbstractGameObject {
 
     Body body
 
+    float stateTime
+    private Animation animation
+
     float rotation = 0
 
+    void setAnimation(Animation animation) {
+        this.animation = animation
+        stateTime = 0
+    }
+
+    Animation getAnimation(){
+        return animation
+    }
+
     public void update(float deltaTime) {
-        if(!body){
+        stateTime += deltaTime
+
+        if (!body) {
             updateMotionX(deltaTime)
             updateMotionY(deltaTime)
 

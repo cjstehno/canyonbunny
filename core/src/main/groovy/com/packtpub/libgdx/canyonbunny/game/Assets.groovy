@@ -7,9 +7,11 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Disposable
 import com.packtpub.libgdx.canyonbunny.util.Constants
 
@@ -83,9 +85,33 @@ class Assets implements Disposable, AssetErrorListener {
     class AssetBunny {
 
         final AtlasRegion head
+        final Animation animNormal
+        final Animation animCopterTransform
+        final Animation animCopterTransformBack
+        final Animation animCopterRotate
 
         AssetBunny(TextureAtlas atlas) {
             head = atlas.findRegion('bunny_head')
+
+            Array<AtlasRegion> regions
+
+            // Animation: Bunny Normal
+            regions = atlas.findRegions('anim_bunny_normal')
+            animNormal = new Animation((1.0f / 10.0f) as float, regions, Animation.PlayMode.LOOP_PINGPONG)
+
+            // Animation: Bunny Copter - knot ears
+            regions = atlas.findRegions('anim_bunny_copter')
+            animCopterTransform = new Animation((1.0f / 10.0f) as float, regions)
+
+            // Animation: Bunny Copter - unknot ears
+            regions = atlas.findRegions('anim_bunny_copter')
+            animCopterTransformBack = new Animation((1.0f / 10.0f) as float, regions, Animation.PlayMode.REVERSED)
+
+            // Animation: Bunny Copter - rotate ears
+            regions = new Array<AtlasRegion>()
+            regions.add(atlas.findRegion('anim_bunny_copter', 4))
+            regions.add(atlas.findRegion('anim_bunny_copter', 5))
+            animCopterRotate = new Animation((1.0f / 15.0f) as float, regions)
         }
     }
 
@@ -103,9 +129,17 @@ class Assets implements Disposable, AssetErrorListener {
     class AssetGoldCoin {
 
         final AtlasRegion goldCoin
+        final Animation animGoldCoin
 
         AssetGoldCoin(TextureAtlas atlas) {
             goldCoin = atlas.findRegion('item_gold_coin')
+
+            Array<AtlasRegion> regions = atlas.findRegions('anim_gold_coin')
+            AtlasRegion region = regions.first()
+            for (int i = 0; i < 10; i++) {
+                regions.insert(0, region)
+            }
+            animGoldCoin = new Animation(((1.0f / 20.0f) as float), regions, Animation.PlayMode.LOOP_PINGPONG)
         }
     }
 

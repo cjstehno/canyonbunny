@@ -1,9 +1,9 @@
 package com.packtpub.libgdx.canyonbunny.game.objects
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.packtpub.libgdx.canyonbunny.game.Assets
 import com.packtpub.libgdx.canyonbunny.util.AudioManager
@@ -13,9 +13,11 @@ import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
 
 @TypeChecked
-class BunnyHead extends AbstractGameObject {
+public class BunnyHead extends AbstractGameObject {
 
-    static final String TAG = BunnyHead.name
+    private final float JUMP_TIME_MAX = 0.3f
+    private final float JUMP_TIME_MIN = 0.1f
+    private final float JUMP_TIME_OFFSET_FLYING = (JUMP_TIME_MAX - 0.018f) as float
 
     enum VIEW_DIRECTION {
         LEFT, RIGHT
@@ -25,19 +27,20 @@ class BunnyHead extends AbstractGameObject {
         GROUNDED, FALLING, JUMP_RISING, JUMP_FALLING
     }
 
+    private Animation animNormal
+    private Animation animCopterTransform
+    private Animation animCopterTransformBack
+    private Animation animCopterRotate
+
     VIEW_DIRECTION viewDirection
-    float timeJumping
+
     JUMP_STATE jumpState
-    boolean hasFeatherPowerup
-    float timeLeftFeatherPowerup
+    float timeJumping
+
+    public boolean hasFeatherPowerup
+    public float timeLeftFeatherPowerup
 
     ParticleEffect dustParticles = new ParticleEffect()
-
-    private final float JUMP_TIME_MAX = 0.3f
-    private final float JUMP_TIME_MIN = 0.1f
-    private final float JUMP_TIME_OFFSET_FLYING = JUMP_TIME_MAX - 0.018f
-
-    private TextureRegion regHead
 
     BunnyHead() {
         init()
@@ -46,7 +49,11 @@ class BunnyHead extends AbstractGameObject {
     void init() {
         dimension.set(1, 1)
 
-        regHead = Assets.instance.bunny.head;
+        animNormal = Assets.instance.bunny.animNormal
+        animCopterTransform = Assets.instance.bunny.animCopterTransform
+        animCopterTransformBack = Assets.instance.bunny.animCopterTransformBack
+        animCopterRotate = Assets.instance.bunny.animCopterRotate
+        setAnimation(animNormal)
 
         // Center image on game object
         origin.set((dimension.x / 2) as float, (dimension.y / 2) as float)
@@ -70,68 +77,12 @@ class BunnyHead extends AbstractGameObject {
         hasFeatherPowerup = false
         timeLeftFeatherPowerup = 0
 
+        // Particles
         dustParticles.load(Gdx.files.classpath('particles/dust.pfx'), Gdx.files.classpath('particles'))
     }
 
-    void setJumping(boolean jumpKeyPressed) {
-        switch (jumpState) {
-            case JUMP_STATE.GROUNDED: // Character is standing on a platform
-                if (jumpKeyPressed) {
-                    AudioManager.instance.play(Assets.instance.sounds.jump)
-
-                    // Start counting jump time from the beginning
-                    timeJumping = 0
-                    jumpState = JUMP_STATE.JUMP_RISING
-                }
-                break
-
-            case JUMP_STATE.JUMP_RISING: // Rising in the air
-                if (!jumpKeyPressed)
-                    jumpState = JUMP_STATE.JUMP_FALLING
-                break
-
-            case JUMP_STATE.FALLING: // Falling down
-            case JUMP_STATE.JUMP_FALLING: // Falling down after jump
-                if (jumpKeyPressed && hasFeatherPowerup()) {
-                    AudioManager.instance.play(Assets.instance.sounds.jumpWithFeather, 1, MathUtils.random(1.0f, 1.1f))
-                    timeJumping = JUMP_TIME_OFFSET_FLYING
-                    jumpState = JUMP_STATE.JUMP_RISING
-                }
-                break
-        }
-    }
-
-    void setFeatherPowerup(boolean pickedUp) {
-        hasFeatherPowerup = pickedUp
-        if (pickedUp) {
-            timeLeftFeatherPowerup = Constants.ITEM_FEATHER_POWERUP_DURATION
-        }
-    }
-
-    boolean hasFeatherPowerup() {
-        return hasFeatherPowerup && timeLeftFeatherPowerup > 0
-    }
-
     @Override
-    public void render(SpriteBatch batch) {
-        dustParticles.draw(batch)
-
-        batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].color)
-
-        // Set special color when game object has a feather power-up
-        if (hasFeatherPowerup) {
-            batch.setColor(1.0f, 0.8f, 0.0f, 1.0f)
-        }
-
-        // Draw image
-        batch.draw(regHead.texture, position.x, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, regHead.regionX, regHead.regionY, regHead.regionWidth, regHead.regionHeight, viewDirection == VIEW_DIRECTION.LEFT, false)
-
-        // Reset color to white
-        batch.setColor(1, 1, 1, 1)
-    }
-
-    @Override
-    public void update(float deltaTime) {
+    void update(float deltaTime) {
         super.update(deltaTime)
 
         if (velocity.x != 0) {
@@ -139,15 +90,41 @@ class BunnyHead extends AbstractGameObject {
         }
 
         if (timeLeftFeatherPowerup > 0) {
+            if (animation == animCopterTransformBack) {
+                // Restart "Transform" animation if another feather power-up was picked up during "TransformBack" animation. Otherwise,
+                // the "TransformBack" animation would be stuck while the power-up is still active.
+                setAnimation(animCopterTransform)
+            }
+
             timeLeftFeatherPowerup -= deltaTime
+
             if (timeLeftFeatherPowerup < 0) {
                 // disable power-up
                 timeLeftFeatherPowerup = 0
                 setFeatherPowerup(false)
+                setAnimation(animCopterTransformBack)
             }
         }
 
         dustParticles.update(deltaTime)
+
+        // Change animation state according to feather power-up
+        if (hasFeatherPowerup) {
+            if (animation == animNormal) {
+                setAnimation(animCopterTransform)
+
+            } else if (animation == animCopterTransform) {
+                if (animation.isAnimationFinished(stateTime)) setAnimation(animCopterRotate)
+            }
+
+        } else {
+            if (animation == animCopterRotate) {
+                if (animation.isAnimationFinished(stateTime)) setAnimation(animCopterTransformBack)
+
+            } else if (animation == animCopterTransformBack) {
+                if (animation.isAnimationFinished(stateTime)) setAnimation(animNormal)
+            }
+        }
     }
 
     @Override
@@ -155,6 +132,10 @@ class BunnyHead extends AbstractGameObject {
         switch (jumpState) {
             case JUMP_STATE.GROUNDED:
                 jumpState = JUMP_STATE.FALLING
+                if (velocity.x != 0) {
+                    dustParticles.setPosition((position.x + dimension.x / 2) as float, position.y)
+                    dustParticles.start()
+                }
                 break
 
             case JUMP_STATE.JUMP_RISING:
@@ -185,6 +166,68 @@ class BunnyHead extends AbstractGameObject {
         if (jumpState != JUMP_STATE.GROUNDED) {
             dustParticles.allowCompletion()
             super.updateMotionY(deltaTime)
+        }
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        // Draw Particles
+        dustParticles.draw(batch)
+
+        // Apply Skin Color
+        batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].color)
+
+        float dimCorrectionX = 0
+        float dimCorrectionY = 0
+        if (animation != animNormal) {
+            dimCorrectionX = 0.05f
+            dimCorrectionY = 0.2f
+        }
+
+        // Draw image
+        batch.draw(animation.getKeyFrame(stateTime, true).texture, position.x, position.y, origin.x, origin.y, (dimension.x + dimCorrectionX) as float, (dimension.y + dimCorrectionY) as float, scale.x, scale.y, rotation, animation.getKeyFrame(stateTime, true).regionX, animation.getKeyFrame(stateTime, true).regionY, animation.getKeyFrame(stateTime, true).regionWidth, animation.getKeyFrame(stateTime, true).regionHeight, viewDirection == VIEW_DIRECTION.LEFT, false)
+
+        // Reset color to white
+        batch.setColor(1, 1, 1, 1)
+    }
+
+    public void setFeatherPowerup(boolean pickedUp) {
+        hasFeatherPowerup = pickedUp
+        if (pickedUp) {
+            timeLeftFeatherPowerup = Constants.ITEM_FEATHER_POWERUP_DURATION
+        }
+    }
+
+    public boolean hasFeatherPowerup() {
+        return hasFeatherPowerup && timeLeftFeatherPowerup > 0
+    }
+
+    public void setJumping(boolean jumpKeyPressed) {
+        switch (jumpState) {
+            case JUMP_STATE.GROUNDED: // Character is standing on a platform
+                if (jumpKeyPressed) {
+                    AudioManager.instance.play(Assets.instance.sounds.jump)
+
+                    // Start counting jump time from the beginning
+                    timeJumping = 0
+                    jumpState = JUMP_STATE.JUMP_RISING
+                }
+                break
+
+            case JUMP_STATE.JUMP_RISING: // Rising in the air
+                if (!jumpKeyPressed) {
+                    jumpState = JUMP_STATE.JUMP_FALLING
+                }
+                break
+
+            case JUMP_STATE.FALLING: // Falling down
+            case JUMP_STATE.JUMP_FALLING: // Falling down after jump
+                if (jumpKeyPressed && hasFeatherPowerup()) {
+                    AudioManager.instance.play(Assets.instance.sounds.jumpWithFeather, 1, MathUtils.random(1.0f, 1.1f))
+                    timeJumping = JUMP_TIME_OFFSET_FLYING
+                    jumpState = JUMP_STATE.JUMP_RISING
+                }
+                break
         }
     }
 }
