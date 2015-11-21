@@ -5,8 +5,11 @@ import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.StretchViewport
@@ -17,6 +20,8 @@ import com.packtpub.libgdx.canyonbunny.util.CharacterSkin
 import com.packtpub.libgdx.canyonbunny.util.GamePreferences
 import groovy.transform.TypeChecked
 
+import static com.badlogic.gdx.math.Interpolation.*
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import static com.packtpub.libgdx.canyonbunny.util.Constants.*
 import static groovy.transform.TypeCheckingMode.SKIP
 
@@ -138,14 +143,34 @@ class MenuScreen extends AbstractGameScreen {
         Table layer = new Table()
 
         // + Coins
-        imgCoins = new Image(skinCanyonBunny, "coins")
+        imgCoins = new Image(skinCanyonBunny, 'coins')
         layer.addActor(imgCoins)
-        imgCoins.setPosition(135, 80)
+        imgCoins.setOrigin((imgCoins.width / 2) as float, (imgCoins.height / 2) as float)
+        imgCoins.addAction(
+            sequence(
+                moveTo(135f, -20f),
+                scaleTo(0f, 0f),
+                fadeOut(0f),
+                delay(2.5f),
+                parallel(
+                    moveBy(0f, 100f, 0.5f, swingOut),
+                    scaleTo(1.0f, 1.0f, 0.25f, Interpolation.linear), alpha(1.0f, 0.5f)
+                )
+            )
+        )
 
         // + Bunny
-        imgBunny = new Image(skinCanyonBunny, "bunny")
+        imgBunny = new Image(skinCanyonBunny, 'bunny')
         layer.addActor(imgBunny)
-        imgBunny.setPosition(355, 40)
+        imgBunny.addAction(
+            sequence(
+                moveTo(655f, 510f),
+                delay(4.0f),
+                moveBy(-70f, -100f, 0.5f, fade),
+                moveBy(-100f, -50f, 0.5f, fade),
+                moveBy(-150f, -300f, 1.0f, elasticIn)
+            )
+        )
 
         return layer
     }
@@ -187,15 +212,47 @@ class MenuScreen extends AbstractGameScreen {
         return layer
     }
 
+    private void showMenuButtons(boolean visible) {
+        float moveDuration = 1.0f
+        Interpolation moveEasing = swing
+        float delayOptionsButton = 0.25f
+
+        float moveX = (300 * (visible ? -1 : 1)) as float
+        float moveY = (0 * (visible ? -1 : 1)) as float
+        final Touchable touchEnabled = visible ? Touchable.enabled : Touchable.disabled
+        btnMenuPlay.addAction(moveBy(moveX, moveY, moveDuration, moveEasing))
+
+        btnMenuOptions.addAction(sequence(delay(delayOptionsButton), moveBy(moveX, moveY, moveDuration, moveEasing)))
+
+        SequenceAction seq = sequence()
+        if (visible)
+            seq.addAction(delay((delayOptionsButton + moveDuration) as float))
+
+        seq.addAction(run({
+            btnMenuPlay.setTouchable(touchEnabled)
+            btnMenuOptions.setTouchable(touchEnabled)
+        } as Runnable))
+
+        stage.addAction(seq)
+    }
+
+    private void showOptionsWindow(boolean visible, boolean animated) {
+        winOptions.addAction(
+            sequence(
+                touchable(visible ? Touchable.enabled : Touchable.disabled),
+                alpha((visible ? 0.8f : 0.0f) as float, (animated ? 1.0f : 0.0f) as float)
+            )
+        )
+    }
+
     private void onPlayClicked() {
         game.setScreen(new GameScreen(game), ScreenTransitionFade.init(0.75f))
     }
 
     private void onOptionsClicked() {
         loadSettings()
-        btnMenuPlay.visible = false
-        btnMenuOptions.visible = false
-        winOptions.visible = true
+        showMenuButtons(false)
+        showOptionsWindow(true, true)
     }
 
     private void loadSettings() {
@@ -233,9 +290,8 @@ class MenuScreen extends AbstractGameScreen {
     }
 
     private void onCancelClicked() {
-        btnMenuPlay.visible = true
-        btnMenuOptions.visible = true
-        winOptions.visible = false
+        showMenuButtons(true)
+        showOptionsWindow(false, true)
         AudioManager.instance.onSettingsUpdated()
     }
 
@@ -361,8 +417,7 @@ class MenuScreen extends AbstractGameScreen {
         // Make options window slightly transparent
         winOptions.setColor(1, 1, 1, 0.8f)
 
-        // Hide options window by default
-        winOptions.setVisible(false)
+        showOptionsWindow(false, false)
 
         if (debugEnabled) winOptions.debug()
 
