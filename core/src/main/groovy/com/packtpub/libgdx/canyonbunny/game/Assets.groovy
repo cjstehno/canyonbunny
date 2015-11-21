@@ -42,7 +42,7 @@ class Assets implements Disposable, AssetErrorListener {
         assetManager.load('sounds/live_lost.wav', Sound)
 
         // load music
-        assetManager.load('music/keith303_-_brand_new_high_score.mp3', Music)
+        assetManager.load('music/keith303_-_brand_new_highscore.mp3', Music)
 
         assetManager.finishLoading()
 

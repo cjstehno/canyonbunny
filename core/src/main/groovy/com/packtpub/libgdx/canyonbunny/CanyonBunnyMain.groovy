@@ -17,9 +17,6 @@ import static com.packtpub.libgdx.canyonbunny.screens.transitions.ScreenTransiti
 @TypeChecked
 class CanyonBunnyMain extends DirectedGame {
 
-    // Might need this
-    // FIXME: http://stackoverflow.com/questions/15572908/opengl-is-not-supported-by-the-video-driver
-
     @Override
     void create() {
         // Set Libgdx log level 
